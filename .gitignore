@@ -1,0 +1,14 @@
+Application/Client/node_modules/
+Application/Server/node_modules/
+
+.env
+
+Kubernetes Manifest/secret.yml
+secret.yml
+
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+terraform.tfvars
+
+
