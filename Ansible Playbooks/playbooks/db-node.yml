@@ -1,0 +1,89 @@
+- name: Configure DB & Monitoring Node
+  hosts: db_node
+  become: true
+
+  tasks:
+
+    - name: update apt cache
+      apt: 
+        update_cache: yes
+
+
+    - name: Install MYSQL
+      apt: 
+        name: mysql-server
+        state: present
+
+    - name: Enable and Start MYSQL
+      systemd: 
+        name: mysql
+        enabled: true
+        state: started
+
+    - name: Install Python MySQL driver (PyMySQL)
+      apt:
+        name: python3-pymysql
+        state: present
+
+    - name: Secure MySQL
+      mysql_user:
+        name: notesuser
+        password: Passw0rd
+        priv: '*.*:ALL'
+        host: '%'
+        state: present
+        login_user: root
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Create application database
+      mysql_db:
+        name: notes_app
+        state: present
+        login_user: root
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Install Prometheus
+      apt:
+        name: prometheus
+        state: present
+
+    - name: Enable and start Prometheus
+      systemd:
+        name: prometheus
+        enabled: true
+        state: started
+
+    - name: Install required packages for Grafana repo
+      apt:
+        name:
+          - apt-transport-https
+          - software-properties-common
+          - wget
+        state: present
+
+    - name: Add Grafana GPG key
+      shell: |
+        wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor > /usr/share/keyrings/grafana.gpg
+      args:
+        creates: /usr/share/keyrings/grafana.gpg
+
+    - name: Add Grafana APT repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
+        state: present
+        filename: grafana
+
+    - name: Update apt cache after adding Grafana repo
+      apt:
+        update_cache: yes
+
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+
+    - name: Enable and start Grafana
+      systemd:
+        name: grafana-server
+        enabled: true
+        state: started

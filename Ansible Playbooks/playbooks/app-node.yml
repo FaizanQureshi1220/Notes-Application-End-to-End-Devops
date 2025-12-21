@@ -1,0 +1,49 @@
+- name: App Node Configure File
+  hosts: app_node
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt: 
+        update_cache: yes
+
+    - name: Installing required packages
+      apt:
+        name: 
+          - curl
+          - ca-certificates
+          - apt-transport-https
+        state: present
+
+    - name: Installing Docker
+      apt: 
+        name: docker.io
+        state: present
+
+    - name: Enable and Start Docker
+      systemd:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Add Ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: true
+
+
+    - name: Install k3s
+      shell: |
+        curl -sfL https://get.k3s.io | sh -
+      args: 
+        creates: /usr/local/bin/k3s
+
+
+    - name: Copy kubeconfig for ubuntu user
+      shell: |
+        mkdir -p /home/ubuntu/.kube
+        cp /etc/rancher/k3s/k3s.yaml /home/ubuntu/.kube/config
+        chown -R ubuntu:ubuntu /home/ubuntu/.kube
+      args:
+        creates: /home/ubuntu/.kube/config
