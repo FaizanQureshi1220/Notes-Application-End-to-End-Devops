@@ -1,6 +1,7 @@
 - name: App Node Configure File
   hosts: app_node
   become: true
+  gather_facts: false
 
   tasks:
     - name: Update apt cache
@@ -10,6 +11,7 @@
     - name: Installing required packages
       apt:
         name: 
+          - git
           - curl
           - ca-certificates
           - apt-transport-https

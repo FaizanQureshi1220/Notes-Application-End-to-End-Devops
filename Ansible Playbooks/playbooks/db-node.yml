@@ -1,6 +1,7 @@
 - name: Configure DB & Monitoring Node
   hosts: db_node
   become: true
+  gather_facts: false
 
   tasks:
 
