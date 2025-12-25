@@ -93,6 +93,14 @@ jobs:
             kubectl get svc -n notes-app
             kubectl get ingress -n notes-app
 
+            kubectl apply -k https://github.com/kubernetes/kube-state-metrics/examples/standard
+            kubectl apply -f node-exporter.yaml
+            kubectl get pods -n kube-system | grep node-exporter
+            kubectl apply -f kube-state-metrics-nodeport.yml
+
+
+
+
             echo "====================================="
             echo "Application deployed successfully"
             echo "Access URL: http://${{ secrets.REMOTE_HOST }}"

@@ -16,7 +16,7 @@ resource "aws_security_group" "main-sg" {
         from_port = 80
         to_port = 80
         protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        cidr_blocks = [var.allowed_IPs]
     }
 
     # sql 
@@ -24,7 +24,7 @@ resource "aws_security_group" "main-sg" {
         from_port = 3306
         to_port = 3306
         protocol = "tcp"
-        cidr_blocks = ["10.0.0.0/16"]
+        cidr_blocks = [var.allowed_IPs]
     }
 
     # nodeport
@@ -32,7 +32,22 @@ resource "aws_security_group" "main-sg" {
         from_port = 30000
         to_port = 32767
         protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        cidr_blocks = [var.allowed_IPs]
+    }
+
+
+    ingress {
+        from_port = 9100
+        to_port = 9100
+        protocol = "tcp"
+        cidr_blocks = [var.allowed_IPs]
+    }
+
+    ingress {
+        from_port   = 30080
+        to_port     = 30080
+        protocol    = "tcp"
+        cidr_blocks = [var.allowed_IPs]
     }
 
 
