@@ -10,21 +10,21 @@ Note.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 async function initDb(retries = 10, delayMs = 5000) {
   while (retries > 0) {
     try {
-      console.log('🔄 Trying to connect DB... Retries left:', retries);
+      console.log(' Trying to connect DB... Retries left:', retries);
 
       await sequelize.authenticate();
-      console.log('✅ DB connection OK');
+      console.log(' DB connection OK');
 
       await sequelize.sync(); // create / sync tables from models
-      console.log('✅ DB synced (schema ensured)');
+      console.log(' DB synced (schema ensured)');
 
       return; // success, exit function
     } catch (err) {
-      console.error('❌ DB init failed:', err.message);
+      console.error(' DB init failed:', err.message);
       retries -= 1;
 
       if (retries === 0) {
-        console.error('❌ Out of retries, giving up');
+        console.error(' Out of retries, giving up');
         throw err;
       }
 

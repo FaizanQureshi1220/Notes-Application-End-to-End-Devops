@@ -45,12 +45,17 @@ jobs:
 
     steps:
       - name: SSH and Deploy
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ubuntu
           key: ${{ secrets.REMOTE_SSH_KEY }}
+          timeout: 120s
+          command_timeout: 10m
           script: |
+
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
             cd ~
             if [ ! -d Notes-Application-End-to-End-Devops ]; then
               git clone https://github.com/FaizanQureshi1220/Notes-Application-End-to-End-Devops.git
@@ -59,6 +64,7 @@ jobs:
             git pull origin main
 
             kubectl apply -f "Kubernetes Manifest/namespace.yml"
+            kubectl get namespace notes-app || kubectl create namespace notes-app
             kubectl apply -f "Kubernetes Manifest/configmap.yml"
 
             kubectl create secret generic notes-secret \
@@ -67,23 +73,26 @@ jobs:
               --from-literal=JWT_SECRET=${{ secrets.JWT_SECRET }} \
               --dry-run=client -o yaml | kubectl apply -n notes-app -f -
 
-
             kubectl apply -f "Kubernetes Manifest/server"
             kubectl apply -f "Kubernetes Manifest/client"
             kubectl apply -f "Kubernetes Manifest/ingress.yml"
 
-            kubectl set image deployment/notes-server notes-server=${{ secrets.DOCKERHUB_USERNAME }}/notes-server:${{ github.sha }} -n notes-app
-            kubectl set image deployment/notes-client notes-client=${{ secrets.DOCKERHUB_USERNAME }}/notes-client:${{ github.sha }} -n notes-app
+            kubectl set image deployment/notes-server \
+              notes-server=${{ secrets.DOCKERHUB_USERNAME }}/notes-server:${{ github.sha }} \
+              -n notes-app || true
+
+            kubectl set image deployment/notes-client \
+              notes-client=${{ secrets.DOCKERHUB_USERNAME }}/notes-client:${{ github.sha }} \
+              -n notes-app || true
 
             kubectl rollout status deployment/notes-server -n notes-app
             kubectl rollout status deployment/notes-client -n notes-app
 
-             echo "====================================="
+            kubectl get pods -n notes-app
+            kubectl get svc -n notes-app
+            kubectl get ingress -n notes-app
+
+            echo "====================================="
             echo "Application deployed successfully"
             echo "Access URL: http://${{ secrets.REMOTE_HOST }}"
             echo "====================================="
-            
-
-      
-
-

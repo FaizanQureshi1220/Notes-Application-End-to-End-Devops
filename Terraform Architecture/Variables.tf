@@ -6,9 +6,16 @@ variable "aws_region" {
 
 }
 
-variable "instance_type" {
+variable "server_instance_type" {
 
   description = "Type of Instance"
+  type = string
+  
+}
+
+variable "db_instance_type" {
+
+  description = "Type of DB Instance"
   type = string
   
 }
@@ -32,4 +39,28 @@ variable "ami" {
   description = "amazon machine image"
   type = string
 
+}
+
+
+variable "db_name" {
+  
+  description = "Database name"
+  type = string
+
+}
+
+variable "db_username" {
+  
+  description = "Database username"
+  type = string
+  sensitive = true
+  
+}
+
+variable "db_password" {
+  
+  description = "Database password"
+  type = string
+  sensitive = true
+  
 }
