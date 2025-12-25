@@ -56,7 +56,7 @@ jobs:
 
             set -e
             export KUBECONFIG=/home/ubuntu/.kube/config
-            
+
             cd ~
             if [ ! -d Notes-Application-End-to-End-Devops ]; then
               git clone https://github.com/FaizanQureshi1220/Notes-Application-End-to-End-Devops.git
@@ -80,11 +80,11 @@ jobs:
 
             kubectl set image deployment/notes-server \
               notes-server=${{ secrets.DOCKERHUB_USERNAME }}/notes-server:${{ github.sha }} \
-              -n notes-app || true
+              -n notes-app 
 
             kubectl set image deployment/notes-client \
               notes-client=${{ secrets.DOCKERHUB_USERNAME }}/notes-client:${{ github.sha }} \
-              -n notes-app || true
+              -n notes-app 
 
             kubectl rollout status deployment/notes-server -n notes-app
             kubectl rollout status deployment/notes-client -n notes-app

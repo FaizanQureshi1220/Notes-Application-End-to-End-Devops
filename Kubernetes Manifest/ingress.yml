@@ -5,10 +5,9 @@ metadata:
   name: notes-ingress
   namespace: notes-app
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
     
 spec:
-  ingressClassName: nginx
   rules:
     - http:
         paths:

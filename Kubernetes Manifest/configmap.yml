@@ -6,7 +6,7 @@ metadata:
   namespace: notes-app
 
 data:
-  DB_HOST: "10.0.2.250"
+  DB_HOST: "10.0.2.192"
   DB_PORT: "3306"
   DB_NAME: "notes_app"
   PORT: "5000"     
