@@ -6,11 +6,11 @@ metadata:
   namespace: notes-app
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-
+    
 spec:
   ingressClassName: nginx
   rules:
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
@@ -19,7 +19,6 @@ spec:
                 name: notes-client
                 port:
                   number: 80
-
           - path: /api
             pathType: Prefix
             backend:
